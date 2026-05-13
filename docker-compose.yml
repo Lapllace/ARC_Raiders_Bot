@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  arc-bot:
+    build: .
+    container_name: arc-raiders-bot
+    restart: always
+    volumes:
+      - ./auth:/app/auth
+      - ./logs:/app/logs
+    env_file:
+      - .env
