@@ -92,6 +92,87 @@ export class ApiService {
         return dicio[name] || name;
     }
 
+    static getMapTranslations() {
+        return {
+            'Buried City': 'Cidade Soterrada',
+            'Stella Montis': 'Stella Montis',
+            'Blue Gate': 'Portão Azul',
+            'Spaceport': 'Espaçoporto',
+            'Riven Tides': 'Marés de Riven',
+            'Dam': 'Represa',
+        };
+    }
+
+    /**
+     * Dados estruturados para o painel "Radar de Speranza".
+     */
+    static async getDashboardRadar() {
+        const traducoesMapas = this.getMapTranslations();
+        const allMaps = Object.values(traducoesMapas);
+
+        try {
+            const { data } = await axios.get(process.env.API_URL, {
+                timeout: 10000,
+                headers: { 'User-Agent': 'Mozilla/5.0' },
+            });
+
+            if (!data?.data?.length) {
+                return {
+                    calm: true,
+                    invasions: [],
+                    maps: allMaps.map((name) => ({ name, invaded: false })),
+                    message: 'Speranza em calmaria. Nenhuma invasão detectada.',
+                    updatedAt: Date.now(),
+                };
+            }
+
+            const agora = Date.now();
+            const eventosAtivos = data.data.filter(
+                (e) => agora >= e.startTime && agora <= e.endTime
+            );
+
+            const invadedNames = new Set();
+            const invasions = eventosAtivos.map((evento) => {
+                const nomeMapa =
+                    traducoesMapas[evento.map] || MAP_NAMES[evento.map] || evento.map;
+                invadedNames.add(nomeMapa);
+                return {
+                    map: nomeMapa,
+                    mapRaw: evento.map,
+                    event: this.traduzirEvento(evento.name),
+                    eventRaw: evento.name,
+                    timeRemaining: this.formatarTempoRestante(evento.endTime - agora),
+                    endsAt: evento.endTime,
+                };
+            });
+
+            const maps = allMaps.map((name) => ({
+                name,
+                invaded: invadedNames.has(name),
+            }));
+
+            return {
+                calm: invasions.length === 0,
+                invasions,
+                maps,
+                message:
+                    invasions.length === 0
+                        ? 'Nenhuma invasão ativa nos mapas monitorados.'
+                        : `${invasions.length} invasão(ões) em andamento.`,
+                updatedAt: agora,
+            };
+        } catch (error) {
+            console.error('> ❌ Erro na API (radar painel):', error.message);
+            return {
+                calm: false,
+                invasions: [],
+                maps: allMaps.map((name) => ({ name, invaded: false })),
+                error: 'Falha ao sincronizar com o satélite de monitoramento.',
+                updatedAt: Date.now(),
+            };
+        }
+    }
+
     static async getNextEvents() {
         try {
             const { data } = await axios.get(process.env.API_URL, { timeout: 10000 });

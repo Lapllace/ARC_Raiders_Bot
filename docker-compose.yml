@@ -4,8 +4,12 @@ services:
     build: .
     container_name: arc-raiders-bot
     restart: always
+    ports:
+      - "3000:3000"
     volumes:
       - ./auth:/app/auth
       - ./logs:/app/logs
     env_file:
       - .env
+    environment:
+      - DASHBOARD_PORT=3000

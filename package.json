@@ -6,14 +6,17 @@
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js",
-    "dev": "nodemon bot.js"
+    "dev": "nodemon bot.js",
+    "dashboard": "node site/server.js"
   },
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.9",
     "axios": "^1.6.7",
     "dotenv": "^16.4.5",
+    "express": "^5.2.1",
     "pino": "^8.19.0",
     "pino-pretty": "^10.3.1",
+    "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0"
   },
   "devDependencies": {

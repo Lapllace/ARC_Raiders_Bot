@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+:root {
+    --arc-bg: #0a0e14;
+    --arc-panel: #111820;
+    --arc-border: #1e2d3d;
+    --arc-cyan: #00f0ff;
+    --arc-green: #39ff14;
+    --arc-red: #ff2d55;
+    --arc-amber: #ffb800;
+}
+
+body {
+    font-family: 'Rajdhani', system-ui, sans-serif;
+    background-color: var(--arc-bg);
+    background-image:
+        radial-gradient(ellipse at 20% 0%, rgba(0, 240, 255, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(57, 255, 20, 0.04) 0%, transparent 45%),
+        linear-gradient(180deg, #0a0e14 0%, #0d1219 100%);
+    min-height: 100vh;
+}
+
+.font-display {
+    font-family: 'Orbitron', sans-serif;
+}
+
+.panel {
+    background: linear-gradient(145deg, rgba(17, 24, 32, 0.95), rgba(10, 14, 20, 0.98));
+    border: 1px solid var(--arc-border);
+    box-shadow:
+        0 0 0 1px rgba(0, 240, 255, 0.05),
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.panel-glow {
+    position: relative;
+}
+
+.panel-glow::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), transparent 40%, rgba(57, 255, 20, 0.15));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+/* LEDs de status */
+.led {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.led-pulse {
+    animation: led-pulse 2s ease-in-out infinite;
+}
+
+@keyframes led-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.65; transform: scale(0.92); }
+}
+
+.led-online { background: var(--arc-green); color: var(--arc-green); }
+.led-offline { background: var(--arc-red); color: var(--arc-red); }
+.led-qr { background: var(--arc-amber); color: var(--arc-amber); }
+.led-connecting { background: var(--arc-cyan); color: var(--arc-cyan); }
+
+/* Terminal */
+.terminal {
+    background: #050708;
+    border: 1px solid #1a252f;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: #7ee787;
+    text-shadow: 0 0 2px rgba(126, 231, 135, 0.3);
+}
+
+.terminal-line-error { color: #ff7b72; }
+.terminal-line-warn { color: #e3b341; }
+.terminal-line-info { color: #7ee787; }
+
+.terminal-cursor::after {
+    content: '▋';
+    animation: blink 1s step-end infinite;
+    color: var(--arc-cyan);
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* Botões de controle */
+.btn-arc {
+    transition: all 0.2s ease;
+    border: 1px solid var(--arc-border);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+}
+
+.btn-arc:hover:not(:disabled) {
+    border-color: var(--arc-cyan);
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.btn-arc:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: linear-gradient(180deg, rgba(0, 240, 255, 0.15), rgba(0, 240, 255, 0.05));
+    color: var(--arc-cyan);
+}
+
+.btn-danger {
+    background: linear-gradient(180deg, rgba(255, 45, 85, 0.15), rgba(255, 45, 85, 0.05));
+    color: #ff6b8a;
+}
+
+.btn-warn {
+    background: linear-gradient(180deg, rgba(255, 184, 0, 0.15), rgba(255, 184, 0, 0.05));
+    color: var(--arc-amber);
+}
+
+/* Mapas do radar */
+.map-tile {
+    border: 1px solid var(--arc-border);
+    transition: all 0.25s ease;
+}
+
+.map-tile.invaded {
+    border-color: rgba(255, 45, 85, 0.6);
+    background: linear-gradient(135deg, rgba(255, 45, 85, 0.12), transparent);
+    box-shadow: 0 0 20px rgba(255, 45, 85, 0.15);
+}
+
+.map-tile.safe {
+    border-color: rgba(57, 255, 20, 0.2);
+    background: linear-gradient(135deg, rgba(57, 255, 20, 0.05), transparent);
+}
+
+.scanline {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+    );
+    z-index: 9999;
+    opacity: 0.4;
+}
